@@ -17,6 +17,7 @@ env:
   RESOURCE_PREFIX: 'elden'
   NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
   MANAGEMENT_GROUP_PREFIX: 'Elden'
+  RESOURCE_GROUP: 'elden-test' 
 
 jobs:
   # Stage: PreviewMain - Job: Validate
@@ -116,4 +117,5 @@ jobs:
             --location "${{ env.LOCATION }}" \
             --name "${{ github.run_number }}-CPS-main" \
             --management-group-id "${{ env.MANAGEMENT_GROUP_PREFIX }}" \
+            --resource-group "${{ env.RESOURCE_GROUP }}" \
             --parameters "${{ github.workspace }}/CPS/main.bicepparam"

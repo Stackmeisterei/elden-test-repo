@@ -3,9 +3,11 @@
 
 
 
+
 resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
-  name: 'myTestVnet'
-  location: 'East US'
+  name: 'vnet'
+
+  location: 'westeurope'
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -18,7 +20,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
         properties: {
           addressPrefix: '10.0.0.0/24'
         }
+        
       }
     ]
+     
   }
 }
