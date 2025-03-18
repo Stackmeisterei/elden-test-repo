@@ -1,0 +1,119 @@
+name: Deploy Bicep to Management Group
+
+# Triggers
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'CPS/*'
+  workflow_dispatch: # Allow manual runs
+
+# Environment variables (akin to Azure DevOps variables)
+env:
+  MAIN_PATH: '${{ github.workspace }}/CPS/main.bicep'
+  LOCATION: 'westeurope'
+  AZURE_CONNECTION: 'STACKMEISTEREI'
+  RESOURCE_PREFIX: 'elden'
+  NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
+  MANAGEMENT_GROUP_PREFIX: 'Elden'
+
+jobs:
+  # Stage: PreviewMain - Job: Validate
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Azure Login with OIDC
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      # Simulated template: CPS-stackmeisterei.yaml (assuming it builds Bicep files)
+      - name: Build Bicep Files (CPS-stackmeisterei)
+        run: |
+          az bicep build --file "${{ env.MAIN_PATH }}"
+
+      # Validate deployment
+      - name: Run Preflight Validation
+        run: |
+          az deployment mg validate \
+            --location "${{ env.LOCATION }}" \
+            --name "${{ github.run_number }}-CPS-Main" \
+            --template-file "${{ env.MAIN_PATH }}" \
+            --management-group-id "${{ env.MANAGEMENT_GROUP_PREFIX }}" \
+            --parameters "${{ github.workspace }}/CPS/main.bicepparam"
+
+  # Stage: PreviewMain - Job: WhatIf
+  what-if:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Build Bicep Files (CPS-stackmeisterei)
+        run: |
+          az bicep build --file "${{ env.MAIN_PATH }}"
+
+      - name: Run What-If for Main
+        run: |
+          az deployment mg what-if \
+            --location "${{ env.LOCATION }}" \
+            --name "${{ github.run_number }}-CPS-Main" \
+            --template-file "${{ env.MAIN_PATH }}" \
+            --management-group-id "${{ env.MANAGEMENT_GROUP_PREFIX }}" \
+            --parameters "${{ github.workspace }}/CPS/main.bicepparam"
+
+  # Stage: PreviewMain - Job: Approval
+  approval:
+    runs-on: ubuntu-latest
+    needs: what-if
+    environment: Solution_Foundation_Celsion  # Environment for approval
+    steps:
+      - name: Approval Placeholder
+        run: echo "Approval handled by GitHub environment approval process"
+
+  # Stage: DeployMain - Job: DeployMain
+  deploy:
+    runs-on: ubuntu-latest
+    needs: approval
+    environment: Solution_Foundation_Celsion
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Build Bicep Files (CPS-stackmeisterei)
+        run: |
+          az bicep build --file "${{ env.MAIN_PATH }}"
+
+      - name: Deploy Main from Artifact
+        run: |
+          az deployment mg create \
+            --template-file "${{ env.MAIN_PATH }}" \
+            --location "${{ env.LOCATION }}" \
+            --name "${{ github.run_number }}-CPS-main" \
+            --management-group-id "${{ env.MANAGEMENT_GROUP_PREFIX }}" \
+            --parameters "${{ github.workspace }}/CPS/main.bicepparam"
