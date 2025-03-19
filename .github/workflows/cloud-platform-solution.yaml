@@ -101,9 +101,8 @@ jobs:
       - name: Run What-If for Main
         run: |
           az deployment group what-if \
-            --resource-group elden-test \
-            --template-file CPS/main.bicep \           
-            --name "${{ github.run_number }}-CPS-main" 
+          --resource-group elden-test \
+          --template-file CPS/main.bicep
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
 
@@ -152,8 +151,6 @@ jobs:
       - name: Deploy Main from Artifact
         run: |
           az deployment group create \
-            --resource-group elden-test \
-            --template-file ${{ env.MAIN_PATH }} \                   
-            --name "${{ github.run_number }}-CPS-main" 
-#            --parameters ${{ github.workspace }}/CPS/main.bicepparam
+          --resource-group elden-test \
+          --template-file CPS/main.bicep
         shell: bash
