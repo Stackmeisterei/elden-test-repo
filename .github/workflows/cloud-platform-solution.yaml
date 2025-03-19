@@ -39,6 +39,7 @@ jobs:
           # "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}"
             subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
             tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            enable-AzPSSession: true
 
       # Build the Bicep files using Azure CLI
       - name: Authenticate to ACR and Build Bicep Files
