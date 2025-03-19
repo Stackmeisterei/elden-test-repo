@@ -21,7 +21,10 @@ on:
         description: 'Azure subscription connection name'
         required: false
         default: 'STACKMEISTEREI'
-        
+
+permissions:
+  id-token: write
+  contents: read
 # Define variables at the workflow level
 env:
   MAIN_PATH: '${{ github.workspace }}/CPS/main.bicep'
