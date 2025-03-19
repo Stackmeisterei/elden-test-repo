@@ -66,8 +66,7 @@ jobs:
         run: |
           az deployment group validate \
             --resource-group elden-test \
-            --template-file ${{ env.MAIN_PATH }} \
-            --location ${{ env.LOCATION }} \            
+            --template-file ${{ env.MAIN_PATH }} \     
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
@@ -104,8 +103,7 @@ jobs:
         run: |
           az deployment group what-if \
             --resource-group elden-test \
-            --template-file ${{ env.MAIN_PATH }} \
-            --location ${{ env.LOCATION }} \            
+            --template-file ${{ env.MAIN_PATH }} \           
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
@@ -156,8 +154,7 @@ jobs:
         run: |
           az deployment group create \
             --resource-group elden-test \
-            --template-file ${{ env.MAIN_PATH }} \
-            --location ${{ env.LOCATION }} \                      
+            --template-file ${{ env.MAIN_PATH }} \                   
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
