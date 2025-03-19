@@ -20,7 +20,9 @@ on:
         description: 'Azure subscription connection name'
         required: true
         default: 'STACKMEISTEREI'
-
+permissions:
+  id-token: write
+  contents: read
       
 jobs:
   build:
