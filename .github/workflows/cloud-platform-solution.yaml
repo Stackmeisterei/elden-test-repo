@@ -66,7 +66,7 @@ jobs:
         run: |
           az deployment group validate \
             --resource-group elden-test \
-            --template-file ${{ env.MAIN_PATH }} \     
+            --template-file main.bicep \     
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
