@@ -32,7 +32,6 @@ env:
   AZURE_CONNECTION: 'STACKMEISTEREI'
   RESOURCE_PREFIX: 'elden'
   NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
-  MANAGEMENT_GROUP_PREFIX: 'Elden'
 
 jobs:
   # Job equivalent to Validate stage
