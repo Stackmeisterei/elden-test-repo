@@ -1,31 +1,27 @@
-name: Build Bicep Files
+name: Deploy Bicep CPS Main
 
-# Trigger the workflow on push to the main branch
+# Trigger the workflow on push to the main branch with path filtering
 on:
   push:
     branches:
       - main
-  # Optional: Allow manual runs with custom inputs
-  workflow_dispatch:
-    inputs:
-      mainPath:
-        description: 'Path to the main Bicep file'
-        required: true
-        default: ''
-      acrConnection:
-        description: 'Azure subscription connection name'
-        required: true
-        default: 'STACKMEISTEREI'
+    paths:
+      - 'CPS/*'
 
-permissions:
-  id-token: write
-  contents: read
-
+# Define variables at the workflow level
+env:
+  MAIN_PATH: '${{ github.workspace }}/CPS/main.bicep'
+  LOCATION: 'westeurope'
+  AZURE_CONNECTION: 'STACKMEISTEREI'
+  RESOURCE_PREFIX: 'elden'
+  NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
+  MANAGEMENT_GROUP_PREFIX: 'Elden'
 
 jobs:
-  build:
+  # Job equivalent to Validate stage
+  validate:
+    name: Validate Main
     runs-on: ubuntu-latest
-    environment: test 
     steps:
       # Checkout the repository code
       - name: Checkout code
@@ -35,15 +31,111 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-            client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          # "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}"
-            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-            enable-AzPSSession: true
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          enable-AzPSSession: true
 
-      # Build the Bicep files using Azure CLI
-      - name: Authenticate to ACR and Build Bicep Files
+      # Assuming CPS-stackmeisterei.yaml is a reusable template; inline it here if needed
+      # For now, assuming it just builds the Bicep file
+      - name: Build Bicep File
         run: |
-          az bicep build --file ${{ github.event.inputs.mainPath || '' }}
+          az bicep build --file ${{ env.MAIN_PATH }}
         shell: bash
-        # Note: Add az bicep build --file "${{ github.event.inputs.fundamentalsPath || '' }}" here in the future when fundamentalsPath is re-enabled
+
+      # Run preflight validation
+      - name: Run Preflight Validation
+        run: |
+          az deployment mg validate \
+            --location ${{ env.LOCATION }} \
+            --name "${{ github.run_number }}-CPS-Main" \
+            --resource-group "elden-test" \
+            --template-file ${{ env.MAIN_PATH }} \
+            --parameters ${{ github.workspace }}/CPS/main.bicepparam
+        shell: bash
+
+  # Job equivalent to WhatIf stage
+  what-if:
+    name: Preview Changes
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Log in to Azure
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          enable-AzPSSession: true
+
+      # Build Bicep file (simulating the template)
+      - name: Build Bicep File
+        run: |
+          az bicep build --file ${{ env.MAIN_PATH }}
+        shell: bash
+
+      # Run what-if
+      - name: Run What-If for Main
+        run: |
+          az deployment mg what-if \
+            --location ${{ env.LOCATION }} \
+            --name "${{ github.run_number }}-CPS-Main" \
+            --resource-group "elden-test" \
+            --template-file ${{ env.MAIN_PATH }} \
+            --parameters ${{ github.workspace }}/CPS/main.bicepparam
+        shell: bash
+
+  # Job for manual approval (simulating the Approval stage)
+  approval:
+    name: Wait for External Approval
+    runs-on: ubuntu-latest
+    needs: what-if
+ #   environment: Solution_Foundation_Celsion # Uses GitHub environment for approval
+    steps:
+      - name: Approval Step
+        run: |
+          echo "Waiting for manual approval in the GitHub UI..."
+          echo "Instructions: Please approve the CPS Main deployment"
+        shell: bash
+
+  # Job equivalent to DeployMain stage
+  deploy:
+    name: Deploy Main
+    runs-on: ubuntu-latest
+    needs: approval
+   # environment: Solution_Foundation_Celsion
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Log in to Azure
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          enable-AzPSSession: true
+
+      # Build Bicep file (simulating the template)
+      - name: Build Bicep File
+        run: |
+          az bicep build --file ${{ env.MAIN_PATH }}
+        shell: bash
+
+      # Deploy the main Bicep file
+      - name: Deploy Main from Artifact
+        run: |
+          az deployment mg create \
+            --template-file ${{ env.MAIN_PATH }} \
+            --location ${{ env.LOCATION }} \
+            --resource-group "elden-test" \
+            --name "${{ github.run_number }}-CPS-main" \
+            --parameters ${{ github.workspace }}/CPS/main.bicepparam
+        shell: bash
