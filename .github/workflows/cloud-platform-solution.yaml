@@ -32,6 +32,7 @@ env:
   AZURE_CONNECTION: 'STACKMEISTEREI'
   RESOURCE_PREFIX: 'elden'
   NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
+  MANAGEMENT_GROUP_PREFIX: '${{ secrets.AZURE_TENANT_ID }}
 
 jobs:
   # Job equivalent to Validate stage
@@ -102,10 +103,10 @@ jobs:
       - name: Run What-If for Main
         run: |
           az deployment mg what-if \
+            --template-file ${{ env.MAIN_PATH }} \
             --location ${{ env.LOCATION }} \
             --name "${{ github.run_number }}-CPS-Main" \
             --resource-group "elden-test" \
-            --template-file ${{ env.MAIN_PATH }} \
             --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
 
@@ -156,6 +157,7 @@ jobs:
           az deployment mg create \
             --template-file ${{ env.MAIN_PATH }} \
             --location ${{ env.LOCATION }} \
+            
             --resource-group "elden-test" \
             --name "${{ github.run_number }}-CPS-main" \
             --parameters ${{ github.workspace }}/CPS/main.bicepparam
