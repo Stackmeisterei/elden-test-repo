@@ -7,7 +7,21 @@ on:
       - main
     paths:
       - 'CPS/*'
-
+  workflow_dispatch:
+    inputs:
+      mainPath:
+        description: 'Path to the main Bicep file'
+        required: false
+        default: 'CPS/main.bicep'
+      location:
+        description: 'Azure deployment location'
+        required: false
+        default: 'westeurope'
+      azureConnection:
+        description: 'Azure subscription connection name'
+        required: false
+        default: 'STACKMEISTEREI'
+        
 # Define variables at the workflow level
 env:
   MAIN_PATH: '${{ github.workspace }}/CPS/main.bicep'
