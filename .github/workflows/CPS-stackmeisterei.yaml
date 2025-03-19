@@ -15,7 +15,7 @@ on:
       mainPath:
         description: 'Path to the main Bicep file'
         required: true
-        default: ''
+        default: 'CPS/main.bicep'
       acrConnection:
         description: 'Azure subscription connection name'
         required: true
