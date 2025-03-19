@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'CPS/*'
+    # paths:
+    #   - 'CPS/*'
   workflow_dispatch:
     inputs:
       mainPath:
