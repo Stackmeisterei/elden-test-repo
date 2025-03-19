@@ -65,9 +65,9 @@ jobs:
       - name: Run Preflight Validation
         run: |
           az deployment group validate \
+            --resource-group elden-test \
             --template-file ${{ env.MAIN_PATH }} \
             --location ${{ env.LOCATION }} \            
-            --resource-group elden-test \
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
@@ -103,9 +103,9 @@ jobs:
       - name: Run What-If for Main
         run: |
           az deployment group what-if \
+            --resource-group elden-test \
             --template-file ${{ env.MAIN_PATH }} \
             --location ${{ env.LOCATION }} \            
-            --resource-group elden-test \
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
@@ -155,9 +155,9 @@ jobs:
       - name: Deploy Main from Artifact
         run: |
           az deployment group create \
-            --template-file ${{ env.MAIN_PATH }} \
-            --location ${{ env.LOCATION }} \            
             --resource-group elden-test \
+            --template-file ${{ env.MAIN_PATH }} \
+            --location ${{ env.LOCATION }} \                      
             --name "${{ github.run_number }}-CPS-main" \
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
