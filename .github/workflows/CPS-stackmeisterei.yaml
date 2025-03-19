@@ -45,7 +45,7 @@ jobs:
             
       - name: Debug Inputs
         run: |
-         echo "mainPath: ${{ github.event.inputs.mainPath || 'CPS/main.bicep' }}"
+         echo "mainPath: ${{ github.event.inputs.mainPath }}"
       
       
       
@@ -54,7 +54,7 @@ jobs:
       - name: Authenticate to ACR and Build Bicep Files
         run: |
           
-          az bicep build --file ${{ github.event.inputs.mainPath}}
+          az bicep build --file ${{ github.event.inputs.mainPath }}
         shell: bash
 
      # az bicep build --file "${{ github.event.inputs.fundamentalsPath || '' }} this needs to be inside run in the future"   
