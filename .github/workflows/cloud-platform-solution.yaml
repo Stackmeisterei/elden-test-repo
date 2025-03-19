@@ -44,6 +44,6 @@ jobs:
       # Build the Bicep files using Azure CLI
       - name: Authenticate to ACR and Build Bicep Files
         run: |
-          az bicep build --file "${{ github.event.inputs.mainPath || '' }}"
+          az bicep build --file ${{ github.event.inputs.mainPath || '' }}
         shell: bash
         # Note: Add az bicep build --file "${{ github.event.inputs.fundamentalsPath || '' }}" here in the future when fundamentalsPath is re-enabled
