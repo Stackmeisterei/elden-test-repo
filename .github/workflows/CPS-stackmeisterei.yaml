@@ -43,12 +43,18 @@ jobs:
             tenant-id: ${{ secrets.AZURE_TENANT_ID }}
             enable-AzPSSession: true
             
-
-      # Build the Bicep files using Azure CLI
+      - name: Debug Inputs
+        run: |
+         echo "mainPath: ${{ github.event.inputs.mainPath || 'CPS/main.bicep' }}"
+      
+      
+      
+      
+         # Build the Bicep files using Azure CLI
       - name: Authenticate to ACR and Build Bicep Files
         run: |
           
-          az bicep build --file ${{ github.event.inputs.mainPath || '' }}
+          az bicep build --file ${{ github.event.inputs.mainPath}}
         shell: bash
 
      # az bicep build --file "${{ github.event.inputs.fundamentalsPath || '' }} this needs to be inside run in the future"   
