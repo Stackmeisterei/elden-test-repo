@@ -27,7 +27,7 @@ permissions:
   contents: read
 # Define variables at the workflow level
 env:
-  MAIN_PATH: '${{ github.workspace }}/CPS/main.bicep'
+  MAIN_PATH: 'CPS/main.bicep'
   LOCATION: 'westeurope'
   AZURE_CONNECTION: 'STACKMEISTEREI'
   RESOURCE_PREFIX: 'elden'
