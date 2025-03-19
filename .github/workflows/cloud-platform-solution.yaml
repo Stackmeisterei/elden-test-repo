@@ -39,6 +39,7 @@ jobs:
   validate:
     name: Validate Main
     runs-on: ubuntu-latest
+    environment: test
     steps:
       # Checkout the repository code
       - name: Checkout code
@@ -75,6 +76,7 @@ jobs:
   what-if:
     name: Preview Changes
     runs-on: ubuntu-latest
+    environment: test
     needs: validate
     steps:
       # Checkout the repository code
@@ -92,6 +94,7 @@ jobs:
 
       # Build Bicep file (simulating the template)
       - name: Build Bicep File
+      
         run: |
           az bicep build --file ${{ env.MAIN_PATH }}
         shell: bash
@@ -111,6 +114,7 @@ jobs:
   approval:
     name: Wait for External Approval
     runs-on: ubuntu-latest
+    environment: test
     needs: what-if
  #   environment: Solution_Foundation_Celsion # Uses GitHub environment for approval
     steps:
@@ -124,6 +128,7 @@ jobs:
   deploy:
     name: Deploy Main
     runs-on: ubuntu-latest
+    environment: test
     needs: approval
    # environment: Solution_Foundation_Celsion
     steps:
