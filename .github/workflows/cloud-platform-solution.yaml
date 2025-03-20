@@ -47,7 +47,7 @@ jobs:
 
       # Log in to Azure using Service Principal credentials from GitHub Secrets
       - name: Azure Login
-        uses: ./.github/workflows/azure-login.yaml
+        uses: /home/runner/work/elden-test-repo/elden-test-repo/.github/workflows/azure-login.yaml
       # Assuming CPS-stackmeisterei.yaml is a reusable template; inline it here if needed
       # For now, assuming it just builds the Bicep file
       - name: Build Bicep File
