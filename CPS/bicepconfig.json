@@ -1,0 +1,10 @@
+{
+    "moduleAliases": {
+      "br": {
+          "stackmeisterei": {
+              "registry": "vnt4dtkbwfmz6.azurecr.io",
+              "modulePath": "bicep/modules"
+              }
+          }
+      }
+  }

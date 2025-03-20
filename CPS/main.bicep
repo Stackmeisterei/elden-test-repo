@@ -3,26 +3,19 @@
 
 
 
-
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+ module vnet2 'br/stackmeisterei:virtualnetwork:0.2' = {
   name: 'vnet'
-
-  location: 'westeurope'
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '10.0.0.0/16'
-      ]
-    }
-    subnets: [
-      {
-        name: 'mySubnet'
+  params: {
+    paramAddressPrefixes: ['10.0.0.0/16']
+    paramSubnets: [
+       {
+        name: 'subnet1'
         properties: {
           addressPrefix: '10.0.0.0/24'
         }
-        
-      }
+       }
     ]
-     
+    paramVirtualNetworkName: 'vnet'
+    location: resourceGroup().location
   }
 }
