@@ -47,13 +47,7 @@ jobs:
 
       # Log in to Azure using Service Principal credentials from GitHub Secrets
       - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          enable-AzPSSession: true
-
+        uses: ./.github/workflows/azure-login.yaml
       # Assuming CPS-stackmeisterei.yaml is a reusable template; inline it here if needed
       # For now, assuming it just builds the Bicep file
       - name: Build Bicep File
