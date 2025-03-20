@@ -2,19 +2,6 @@ name: Azure Login
 
 on:
   workflow_call:
-    inputs:
-      clientId:
-        description: Azure Service Principal Client ID
-        required: true
-        type: string
-      subscriptionId:
-        description: Azure Subscription ID
-        required: true
-        type: string
-      tenantId:
-        description: Azure Tenant ID
-        required: true
-        type: string
 
 jobs:
   login:
@@ -23,7 +10,7 @@ jobs:
       - name: Log in to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ inputs.clientId }}
-          subscription-id: ${{ inputs.subscriptionId }}
-          tenant-id: ${{ inputs.tenantId }}
+          client-id: ${{ secrets.clientId }}
+          subscription-id: ${{ secrets.subscriptionId }}
+          tenant-id: ${{ secrets.tenantId }}
           enable-AzPSSession: true

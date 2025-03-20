@@ -35,34 +35,28 @@ env:
 
 
 jobs:
-  # Job equivalent to Validate stage
+  azure-login:
+    name: Azure Login
+    uses: ./.github/workflows/azure-login.yaml
+
   validate:
     name: Validate Main
     runs-on: ubuntu-latest
-    #environment: test
+    needs: azure-login  # Ensure Azure login runs first
     steps:
-      # Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Log in to Azure using Service Principal credentials from GitHub Secrets
-      - name: Azure Login
-        uses: /home/runner/work/elden-test-repo/elden-test-repo/.github/workflows/azure-login.yaml
-      # Assuming CPS-stackmeisterei.yaml is a reusable template; inline it here if needed
-      # For now, assuming it just builds the Bicep file
       - name: Build Bicep File
         run: |
           az bicep build --file ${{ env.MAIN_PATH }}
         shell: bash
 
-      # Run preflight validation
       - name: Run Preflight Validation
         run: |
           az deployment group validate \
           --resource-group elden-test \
-          --template-file CPS/main.bicep
-#            --parameters ${{ github.workspace }}/CPS/main.bicepparam
-        shell: bash
+          --template-file CPS/main.bice
 
   # Job equivalent to WhatIf stage
   what-if:
