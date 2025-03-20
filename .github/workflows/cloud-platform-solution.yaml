@@ -39,7 +39,7 @@ jobs:
   validate:
     name: Validate Main
     runs-on: ubuntu-latest
-    environment: test
+  #  environment: test
     steps:
       # Checkout the repository code
       - name: Checkout code
