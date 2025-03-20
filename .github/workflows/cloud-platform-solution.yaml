@@ -39,7 +39,7 @@ jobs:
   validate:
     name: Validate Main
     runs-on: ubuntu-latest
-  #  environment: test
+    #environment: test
     steps:
       # Checkout the repository code
       - name: Checkout code
@@ -74,7 +74,7 @@ jobs:
   what-if:
     name: Preview Changes
     runs-on: ubuntu-latest
-    environment: test
+  #  environment: test
     needs: validate
     steps:
       # Checkout the repository code
@@ -106,24 +106,24 @@ jobs:
 #            --parameters ${{ github.workspace }}/CPS/main.bicepparam
         shell: bash
 
-  # Job for manual approval (simulating the Approval stage)
-  approval:
-    name: Wait for External Approval
-    runs-on: ubuntu-latest
-    environment: test
-    needs: what-if
- #   environment: Solution_Foundation_Celsion # Uses GitHub environment for approval
-    steps:
+#   # Job for manual approval (simulating the Approval stage)
+#   approval:
+#     name: Wait for External Approval
+#     runs-on: ubuntu-latest
+#   #  environment: test
+#     needs: what-if
+#  #   environment: Solution_Foundation_Celsion # Uses GitHub environment for approval
+#     steps:
     
-      - uses: trstringer/manual-approval@v1
-        with:
-         secret: ${{ github.TOKEN }}
-         approvers: user1,user2
-      - name: Approval Step
-        run: |
-          echo "Waiting for manual approval in the GitHub UI..."
-          echo "Instructions: Please approve the CPS Main deployment"
-        shell: bash
+#       - uses: trstringer/manual-approval@v1
+#         with:
+#          secret: ${{ github.TOKEN }}
+#          approvers: user1,user2
+#       - name: Approval Step
+#         run: |
+#           echo "Waiting for manual approval in the GitHub UI..."
+#           echo "Instructions: Please approve the CPS Main deployment"
+#         shell: bash
 
   # Job equivalent to DeployMain stage
   deploy:
