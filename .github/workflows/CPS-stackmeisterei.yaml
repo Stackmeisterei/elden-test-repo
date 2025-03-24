@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-  # Optional: Allow manual runs with custom inputs
+  # workflow_dispatch allows manual runs with custom inputs
   workflow_dispatch:
     inputs:
  #     fundamentalsPath:
@@ -29,11 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     steps:
-      # Checkout the repository code
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Log in to Azure using Service Principal credentials from GitHub Secrets
+      # This Login uses OIDC to connect to azure using the secrets I stored in GitHub
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -50,7 +50,6 @@ jobs:
       
       
       
-         # Build the Bicep files using Azure CLI
       - name: Authenticate to ACR and Build Bicep Files
         run: |
           
