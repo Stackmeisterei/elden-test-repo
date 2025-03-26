@@ -16,10 +16,6 @@ on:
         description: 'Azure deployment location'
         required: false
         default: 'westeurope'
-      azureConnection:
-        description: 'Azure subscription connection name'
-        required: false
-        default: 'STACKMEISTEREI'
 
 permissions:
   id-token: write
@@ -28,7 +24,6 @@ permissions:
 env:
   MAIN_PATH: 'CPS/main.bicep'
   LOCATION: 'westeurope'
-  AZURE_CONNECTION: 'STACKMEISTEREI'
   RESOURCE_PREFIX: 'elden'
   NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
 
