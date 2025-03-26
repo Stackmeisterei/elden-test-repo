@@ -53,7 +53,7 @@ jobs:
         run: |
           az deployment group validate \
           --resource-group elden-test \
-          --template-file CPS/main.bice
+          --template-file CPS/main.bicep
 
 
   what-if:
