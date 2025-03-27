@@ -2,13 +2,11 @@ name: Test Action
 
     
 on: 
-    push: 
-        branches: 
-            - main
+    repository_dispatch: 
+        types:
+            - redeploy-containerapp
 
-    workflow_dispatch: 
 
-        
 jobs: 
     test-job:
         name: Test Job
