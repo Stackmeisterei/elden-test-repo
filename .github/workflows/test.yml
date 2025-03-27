@@ -5,6 +5,7 @@ on:
     repository_dispatch: 
         types:
             - redeploy-containerapp
+    workflow_dispatch:
 
 
 jobs: 
