@@ -1,8 +1,8 @@
 name: Webhook Listener for Registry Package
 
 on:
-  workflow_dispatch:
-  registry_package:  # Listens if the webhook is sent directly
+  repository_dispatch:
+    types: [package-published]
 
 jobs:
   process_webhook:
