@@ -2,7 +2,7 @@ name: Webhook Listener for Registry Package
 
 on:
   repository_dispatch:
-    types: [package-published]
+    types: [package_published] 
 
 jobs:
   process_webhook:
