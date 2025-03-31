@@ -1,23 +1,29 @@
-name: Test Action
+name: Webhook Listener for Registry Package
 
-    
 on:
-  repository_dispatch:
-    types: [registry_package]
+  workflow_dispatch:
+  registry_package:  # Listens if the webhook is sent directly
 
+jobs:
+  process_webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Latest Tag
+        run: |
+          TAGS=$(echo '${{ toJson(github.event.registry_package.package_version.metadata.container.tags) }}')
+          echo "Detected tags: $TAGS"
 
-jobs: 
-    test-job:
-        name: Test Job
-        runs-on: ubuntu-latest
-        if: 
-        steps:
-            - run: |
-                echo "Testing the job"
-
-    test-job2:
-        name: Test Job 2
-        runs-on: ubuntu-latest
-        steps:
-            - run: |
-                echo "Testing the job 2"
+          if echo "$TAGS" | grep -q '"latest"'; then
+            echo "Latest tag found! Triggering deployment workflow..."
+            curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_TOKEN }}" \
+                 -H "Accept: application/vnd.github.everest-preview+json" \
+                 https://api.github.com/repos/ORG_B/REPO_B/dispatches \
+                 -d '{
+                       "event_type": "registry_package",
+                       "client_payload": {
+                         "image": "${{ github.event.registry_package.name }}",
+                         "tag": "latest"
+                       }
+                     }'
+          else
+            echo "No latest tag found. Skipping."
