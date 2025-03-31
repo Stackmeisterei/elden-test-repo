@@ -1,13 +1,9 @@
 name: Test Action
 
     
-on: 
-    workflow_dispatch:
-        inputs:
-          runJob:
-            description: 'which job'
-            required: true
-            default: 'test-job2'
+on:
+  repository_dispatch:
+    types: [registry_package]
 
 
 jobs: 
