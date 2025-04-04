@@ -13,7 +13,6 @@ on:
         default: '${{ github.workspace }}/Placeholder/CAS/'
 
 env:
-  azureConnection: 'Placeholder'
   location: 'Placeholder'
 
 jobs:
