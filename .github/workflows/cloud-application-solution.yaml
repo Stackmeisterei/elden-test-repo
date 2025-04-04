@@ -1,11 +1,7 @@
 name: Cloud Application Solution
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'CAS/*.bicep'
+  workflow_dispatch:
 
 env:
   SYSTEM_ACCESSTOKEN: ${{ secrets.GITHUB_TOKEN }}
