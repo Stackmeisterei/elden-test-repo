@@ -27,7 +27,7 @@ env:
   RESOURCE_PREFIX: 'elden'
   NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
 
-
+ 
 jobs:
   validate:
     name: Validate Main

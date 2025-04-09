@@ -1,7 +1,8 @@
-name: Deployment Workflow
+name: Deploy Bicep CPS Main 
 
 on:
   workflow_dispatch:
+    types: [trigger-from-CAS-workflow]
     inputs:
       fileName:
         description: 'File name'
@@ -10,61 +11,46 @@ on:
       mainPath:
         description: 'Main path'
         required: true
-        default: '${{ github.workspace }}/Placeholder/CAS/'
+        default: '${{ github.workspace }}/CAS/'
+
+permissions:
+  id-token: write
+  contents: read
 
 env:
-  location: 'Placeholder'
+  MAIN_PATH: 'CAS/'
+  LOCATION: 'westeurope'
+  RESOURCE_PREFIX: 'emre'
+  NOTIFY_USERS: 'emre.milijic@hafn-stack.de'
+
 
 jobs:
-  deployment:
+  validate:
+    name: Validate Main
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Preflight Validation
-        id: preflight
-        run: |
-          TEMPLATE_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicep"
-          PARAMETERS_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicepparam"
-          az deployment tenant validate \
-          --location ${{ env.location }} \
-          --name "${{ github.run_number }}-CAS-${{ github.event.inputs.fileName }}" \
-          --template-file "$TEMPLATE_PATH" \
-          --parameters "$PARAMETERS_PATH"
-        env:
-          AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
-
-      - name: Perform What-If Analysis
-        id: whatif
-        run: |
-          TEMPLATE_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicep"
-          PARAMETERS_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicepparam"
-          az deployment tenant what-if \
-          --location ${{ env.location }} \
-          --name "${{ github.run_number }}-CAS-${{ github.event.inputs.fileName }}" \
-          --template-file "$TEMPLATE_PATH" \
-          --parameters "$PARAMETERS_PATH"
-        env:
-          AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
-
-      - name: Manual Approval
-        uses: hmarr/auto-approve-action@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Azure Login
+        uses: azure/login@v2
         with:
-          timeout-minutes: 60
-          instructions: 'Please approve the CAS Main deployment'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          enable-AzPSSession: true
+          
+      - name: Build Bicep File
+        run: |
+          az bicep build --file ${{ env.MAIN_PATH }}
+        shell: bash
 
-      - name: Deploy CAS
-        id: deploy
+      - name: Run Preflight Validation
         run: |
           TEMPLATE_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicep"
           PARAMETERS_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicepparam"
-          az deployment tenant create \
-          --location ${{ env.location }} \
-          --name "${{ github.run_number }}-CAS-${{ github.event.inputs.fileName }}" \
+          az deployment group create \
+          --resource-group emreTestVersioning \
           --template-file "$TEMPLATE_PATH" \
           --parameters "$PARAMETERS_PATH"
-        env:
-          AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
+

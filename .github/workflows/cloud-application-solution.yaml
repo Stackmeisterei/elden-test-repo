@@ -25,7 +25,7 @@ jobs:
           done < output.txt
 
       - name: Upload Detected Changes Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DetectedChanges
           path: output.txt
@@ -39,25 +39,25 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download Detected Changes Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: DetectedChanges
           path: ./artifacts
 
-      - name: Trigger Another Pipeline via REST API
+      - name: Trigger another GitHub Actions workflow
         run: |
-          while IFS= read -r item; do
-            curl -X POST -H "Content-Type: application/json" \
-              -H "Authorization: Bearer ${{ secrets.SYSTEM_ACCESSTOKEN }}" \
+          while IFS= read -r fileName; do
+            if [ -n "$fileName" ]; then
+              echo "Triggering workflow for file: $fileName"
+              curl -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/dispatches \
               -d "{
-                    \"templateParameters\": { \"fileName\": \"$item\" },
-                    \"resources\": {
-                      \"repositories\": {
-                        \"self\": {
-                          \"refName\": \"refs/heads/${{ github.ref_name }}\"
-                        }
-                      }
-                    }
-                  }" \
-              https://dev.azure.com/HAFNStack/${{ github.repository_owner }}/_apis/pipelines/${{ secrets.PIPELINE_ID }}/runs?api-version=7.1
+                \"event_type\": \"bicep-file-change\",
+                \"client_payload\": {
+                  \"fileName\": \"$fileName\"
+                }
+              }"
+            fi
           done < ./artifacts/output.txt
