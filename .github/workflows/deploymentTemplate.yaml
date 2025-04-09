@@ -1,17 +1,13 @@
 name: Deploy Bicep CAS Files 
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
     types: [bicep-file-change]
     inputs:
       fileName:
         description: 'File name'
         required: true
         default: ''
-      mainPath:
-        description: 'Main path'
-        required: true
-        default: '${{ github.workspace }}/CAS/'
 
 permissions:
   id-token: write
@@ -47,8 +43,8 @@ jobs:
 
       - name: Run Preflight Validation
         run: |
-          TEMPLATE_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicep"
-          PARAMETERS_PATH="${{ github.event.inputs.mainPath }}/${{ github.event.inputs.fileName }}.bicepparam"
+          TEMPLATE_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicep"
+          PARAMETERS_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicepparam"
           az deployment group create \
           --resource-group emreTestVersioning \
           --template-file "$TEMPLATE_PATH" \
