@@ -2,7 +2,7 @@ name: Deploy Bicep CAS Files
 
 on:
   workflow_dispatch:
-    types: [trigger-from-CAS-workflow]
+    types: [bicep-file-change]
     inputs:
       fileName:
         description: 'File name'
