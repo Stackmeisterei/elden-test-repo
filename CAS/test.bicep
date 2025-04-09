@@ -1,11 +1,11 @@
-targetScope = 'subscription'
 
 param paramnname string
 
-
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: paramnname
   location: 'westeurope'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
 }
-
-

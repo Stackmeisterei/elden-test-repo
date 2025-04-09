@@ -1,3 +1,3 @@
-using 'test.bicep'
+using 'test3.bicep'
 
-param paramnname = 'emreTestGithubResourceGroup'
+param paramnname = 'emreTestStorageAccount3'
