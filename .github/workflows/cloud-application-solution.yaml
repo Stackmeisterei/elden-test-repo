@@ -1,0 +1,63 @@
+name: Cloud Application Solution
+
+on:
+  workflow_dispatch:
+
+env:
+  SYSTEM_ACCESSTOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  DetermineChanges:
+    name: Identify Modified Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Detect Changes and Write Files to Output File
+        run: |
+          git diff --name-only HEAD~1 HEAD | grep -E '\.bicep$' | xargs -n1 basename | sed 's/\.bicep$//' > output.txt
+          cat output.txt
+          while IFS= read -r entry; do
+            echo "Detected changes in file: $entry"
+          done < output.txt
+
+      - name: Upload Detected Changes Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: DetectedChanges
+          path: output.txt
+
+  HandleModifiedFiles:
+    name: Handle Modified Files
+    needs: DetermineChanges
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Download Detected Changes Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: DetectedChanges
+          path: ./artifacts
+
+      - name: Trigger Another Pipeline via REST API
+        run: |
+          while IFS= read -r item; do
+            curl -X POST -H "Content-Type: application/json" \
+              -H "Authorization: Bearer ${{ secrets.SYSTEM_ACCESSTOKEN }}" \
+              -d "{
+                    \"templateParameters\": { \"fileName\": \"$item\" },
+                    \"resources\": {
+                      \"repositories\": {
+                        \"self\": {
+                          \"refName\": \"refs/heads/${{ github.ref_name }}\"
+                        }
+                      }
+                    }
+                  }" \
+              https://dev.azure.com/HAFNStack/${{ github.repository_owner }}/_apis/pipelines/${{ secrets.PIPELINE_ID }}/runs?api-version=7.1
+          done < ./artifacts/output.txt
