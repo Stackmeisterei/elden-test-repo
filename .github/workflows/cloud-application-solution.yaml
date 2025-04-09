@@ -55,8 +55,11 @@ jobs:
               echo "Triggering workflow for file: $fileName"
               curl -X POST \
               -H "Accept: application/vnd.github+json" \
+              echo "1" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              echo "2" \
               https://api.github.com/repos/${{ github.repository }}/dispatches \
+              echo "3" \
               -d "{
                 \"event_type\": \"bicep-file-change\",
                 \"client_payload\": {
