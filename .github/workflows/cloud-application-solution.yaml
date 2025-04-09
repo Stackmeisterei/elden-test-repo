@@ -6,6 +6,10 @@ on:
 env:
   SYSTEM_ACCESSTOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   DetermineChanges:
     name: Identify Modified Files
