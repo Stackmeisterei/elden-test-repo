@@ -9,3 +9,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   }
   kind: 'StorageV2'
 }
+
+
+
