@@ -2,9 +2,9 @@ name: Build Bicep Files
 # NEEDS ROLE ASSIGNMENT ACRPULL 
 # Trigger the workflow on push to the main branch
 on:
-  push:
-    branches:
-      - main
+#  push:
+#    branches:
+#      - main
   # workflow_dispatch allows manual runs with custom inputs
   workflow_dispatch:
     inputs:

@@ -1,11 +1,11 @@
 name: Deploy Bicep CPS Main 
 
 on:
-  push:
-    branches:
-      - main
-    # paths:
-    #   - 'CPS/*'
+#  push:
+#    branches:
+#      - main
+#     paths:
+#       - 'CPS/*'
   workflow_dispatch:
     inputs:
       mainPath:
