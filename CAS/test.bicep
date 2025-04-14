@@ -1,5 +1,5 @@
 
-param paramnname string
+param paramnname string = 'emreTestStorageAccount1'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: paramnname
