@@ -33,9 +33,6 @@ jobs:
         with:
           creds: ${{  secrets.EMRE_CREDS  }}
           enable-AzPSSession: true
-      - name: Install Bicep CLI
-        run: |
-          az bicep install
           
       - name: Build Bicep File
         run: |
@@ -45,7 +42,6 @@ jobs:
 
       - name: Run Preflight Validation
         run: |
-          echo ${{ github.event.client_payload.fileName }}
           TEMPLATE_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicep"
           PARAMETERS_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicepparam"
           az deployment group create \
