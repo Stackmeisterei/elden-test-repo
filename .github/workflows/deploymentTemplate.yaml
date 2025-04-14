@@ -36,7 +36,7 @@ jobs:
           
       - name: Build Bicep File
         run: |
-          az bicep build --file ${{ github.event.client_payload.fileName }}.bicep
+          az bicep build --file ${{  env.MAIN_PATH  }}${{ github.event.client_payload.fileName }}.bicep
         shell: bash
 
       - name: Run Preflight Validation
