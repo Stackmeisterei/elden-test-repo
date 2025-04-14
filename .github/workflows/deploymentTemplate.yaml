@@ -49,6 +49,7 @@ jobs:
           TEMPLATE_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicep"
           PARAMETERS_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicepparam"
           az deployment group create \
+          --location westeurope \
           --resource-group emreTestVersioning \
           --template-file "$TEMPLATE_PATH" \
           --parameters "$PARAMETERS_PATH"
