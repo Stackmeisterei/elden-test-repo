@@ -5,7 +5,14 @@ on:
   registry_package:
     types: [published]
 
+
 jobs:
+  test_printdigest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test container digest
+        run: echo "Digest is ${{ github.event.client_payload.container_metadata.tag.digest }}"
+
   process_webhook:
     runs-on: ubuntu-latest
     steps:
