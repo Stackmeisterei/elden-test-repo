@@ -1,6 +1,7 @@
 name: Webhook Listener for Registry Package
 
 on:
+  workflow_dispatch:
   repository_dispatch:
   registry_package:
     types: [published]
@@ -11,14 +12,8 @@ jobs:
   test_printdigest:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout target branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.client_payload.branch }}
-      
-      
-      - name: Test container digest
-        run: echo "Digest is ${{ github.event.client_payload.container_metadata.tag.digest }}"
+      - name: Testing container digest
+        run: echo "${{ github.event.client_payload.container_metadata.tag.digest }}"
 
   process_webhook:
     runs-on: ubuntu-latest
