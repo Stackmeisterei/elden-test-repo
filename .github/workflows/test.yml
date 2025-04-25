@@ -17,4 +17,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Extract Latest Tag
-        run: echo "test"
+        run: echo "testfrom postman"
