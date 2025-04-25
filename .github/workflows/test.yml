@@ -1,13 +1,22 @@
 name: Webhook Listener for Registry Package
 
 on:
+  workflow_dispatch:
   repository_dispatch:
   registry_package:
     types: [published]
 
+
 jobs:
+    
+  test_printdigest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing container digest
+        run: echo "${{ github.event.client_payload.container_metadata.tag.digest }}"
+
   process_webhook:
     runs-on: ubuntu-latest
     steps:
       - name: Extract Latest Tag
-        run: echo "test"
+        run: echo "testfrom postman"
