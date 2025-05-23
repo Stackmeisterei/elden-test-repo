@@ -1,27 +1,76 @@
-name: Test Action
+name: Update Azure Container Apps
+
+on:
+    repository_dispatch:
+    registry_package:
+      types: [published]
+    workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  update-container-apps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Azure via OIDC
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     
-on: 
-    workflow_dispatch:
-        inputs:
-          runJob:
-            description: 'which job'
-            required: true
-            default: 'test-job2'
+      - name: Update Container Apps
+        run: |
+            for app in container-app1 container-app2 container-app3; do
+              az containerapp update \
+                --name $app \
+                --resource-group containerapps-test \
+                --image ghcr.io/eldensokoli/test-project:latest
+            done
 
 
-jobs: 
-    test-job:
-        name: Test Job
-        runs-on: ubuntu-latest
-        if: 
-        steps:
-            - run: |
-                echo "Testing the job"
 
-    test-job2:
-        name: Test Job 2
-        runs-on: ubuntu-latest
-        steps:
-            - run: |
-                echo "Testing the job 2"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# name: Update Azure Container Apps
+
+# on:
+#     repository_dispatch:
+#     registry_package:
+#       types: [published]
+#     workflow_dispatch:  # Allows manual triggering
+
+# jobs:
+#   update-container-apps:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Login to Azure via OIDC
+#         uses: azure/login@v1
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    
+#       - name: Update Container Apps
+#         run: |
+#             for app in dab-ebanking-tst dab-gateway-tst dab-operations-tst; do
+#               az containerapp update \
+#                 --name $app \
+#                 --resource-group celsion-tst-apps \
+#                 --image ghcr.io/celsion-bank/digital-asset-backbone:latest
+#             done
