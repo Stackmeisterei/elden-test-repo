@@ -23,17 +23,22 @@ jobs:
 
 
 
-      - name: List container apps in resource group
-        run: az containerapp list --resource-group containerapps-test --output table
-     # for app in test-container-app1 test-container-app2 test-container-app3; do
-     #done
+ 
+           
+ 
+
       - name: Update Container Apps
         run: |
-            for app in test-container-app1 test-container-app2 test-container-app3; do
-             echo "Updating container app: $app"
-             az containerapp update \
-              --name "$app" \
-              --resource-group containerapps-test \
-              --image ghcr.io/eldensokoli/test-project:latest
-            done
+          IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/eldensokoli/test-project:latest | cut -d'@' -f2)
+          
+          for app in test-container-app1 test-container-app2 test-container-app3; do
+           echo "Updating container app: $app with image sha: $IMAGE_SHA"
+           az containerapp update \
+            --name "$app" \
+            --resource-group containerapps-test \
+            --image "ghcr.io/eldensokoli/test-project@$IMAGE_SHA" \
+            --tags $IMAGE_SHA
+          done
+
+
 
