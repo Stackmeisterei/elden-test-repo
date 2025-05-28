@@ -51,13 +51,15 @@ jobs:
           HEAD_SHA=${{ github.event.pull_request.head.sha }} # Last commit of the PR before it was merged
           
           git fetch origin $BASE_REF --depth=100 
-          git diff --name-only origin/$BASE_REF $HEAD_SHA | grep -E '\.bicep$' || true > changed_bicep_files.txt
-
+          git fetch origin $HEAD_SHA --depth=1
+          
+          changed_files=$(git diff --name-only origin/$BASE_REF $HEAD_SHA | grep '\.bicep$' || true)
           echo "Changed files:"
-          cat changed_bicep_files.txt
+          echo "$changed_files"
 
+          # Save output as multiline string
           echo "changed_files<<EOF" >> $GITHUB_OUTPUT
-          cat changed_bicep_files.txt >> $GITHUB_OUTPUT
+          echo "$changed_files" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
 
@@ -67,9 +69,9 @@ jobs:
         run: |
         
           changed_files="${{ steps.changed-files.outputs.changed_files }}"           
-          changed_files=$(echo "$changed_files" | tr '\n' ' ')
           echo "Changed files: $changed_files"
-         
+
+          IFS=$'\n'         
           for file in $changed_files; do
               if [[ $file == CAS/* ]]; then
                 metadata_file="$(dirname "$file")/metadata.json"
@@ -91,10 +93,10 @@ jobs:
         if: steps.changed-files.outputs.changed_files != '' && contains(steps.changed-files.outputs.changed_files, 'CPS/')
         run: |
           
-          changed_files="${{ steps.changed-files.outputs.changed_files }}"
-          changed_files=$(echo "$changed_files" | tr '\n' ' ')
+          changed_files="${{ steps.changed-files.outputs.changed_files }}"           
           echo "Changed files: $changed_files"
           
+          IFS=$'\n'         
           for file in $changed_files; do
             if [[ $file == CPS/* ]]; then
               metadata_file="$(dirname "$file")/metadata.json"
