@@ -47,17 +47,20 @@ jobs:
         id: changed-files
         run: |
 
-          BASE_REF=${{ github.event.pull_request.base.ref }} # Branch the PR was targeting
-          HEAD_SHA=${{ github.event.pull_request.head.sha }} # Last commit of the PR before it was merged
-          
-          git fetch origin $BASE_REF --depth=100 
-          git fetch origin $HEAD_SHA --depth=1
-          
-          changed_files=$(git diff --name-only origin/$BASE_REF $HEAD_SHA | grep '\.bicep$' || true)
+          BASE_REF=${{ github.event.pull_request.base.ref }}
+          MERGE_COMMIT_SHA=${{ github.event.pull_request.merge_commit_sha }}  
+
+          echo "Fetching base ref: $BASE_REF"
+          git fetch origin $BASE_REF --depth=100
+
+          echo "Fetching merge commit SHA: $MERGE_COMMIT_SHA"
+          git fetch origin $MERGE_COMMIT_SHA --depth=1
+      
+          changed_files=$(git diff --name-only origin/$BASE_REF $MERGE_COMMIT_SHA | grep '\.bicep$' || true)
+    
           echo "Changed files:"
           echo "$changed_files"
 
-          # Save output as multiline string
           echo "changed_files<<EOF" >> $GITHUB_OUTPUT
           echo "$changed_files" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
