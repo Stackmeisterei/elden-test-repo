@@ -47,17 +47,13 @@ jobs:
         id: changed-files
         run: |
 
-          BASE_REF=${{ github.event.pull_request.base.ref }}
-          MERGE_COMMIT_SHA=${{ github.event.pull_request.merge_commit_sha }}  
-
-          echo "Fetching base ref: $BASE_REF"
-          git fetch origin $BASE_REF --depth=100
+          MERGE_COMMIT_SHA=${{ github.event.pull_request.merge_commit_sha }}
 
           echo "Fetching merge commit SHA: $MERGE_COMMIT_SHA"
-          git fetch origin $MERGE_COMMIT_SHA --depth=1
-      
-          changed_files=$(git diff --name-only origin/$BASE_REF $MERGE_COMMIT_SHA | grep '\.bicep$' || true)
-    
+          git fetch origin $MERGE_COMMIT_SHA --depth=2
+
+          changed_files=$(git diff --name-only $MERGE_COMMIT_SHA^1 $MERGE_COMMIT_SHA | grep '\.bicep$' || true)
+
           echo "Changed files:"
           echo "$changed_files"
 
