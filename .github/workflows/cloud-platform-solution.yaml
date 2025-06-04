@@ -1,11 +1,11 @@
 name: Deploy Bicep CPS Main 
 
 on:
-  push:
-    branches:
-      - main
-    # paths:
-    #   - 'CPS/*'
+#  push:
+#    branches:
+#      - main
+#     paths:
+#       - 'CPS/*'
   workflow_dispatch:
     inputs:
       mainPath:
@@ -27,7 +27,7 @@ env:
   RESOURCE_PREFIX: 'elden'
   NOTIFY_USERS: 'elden.sokoli@hafn-stack.de'
 
-
+ 
 jobs:
   validate:
     name: Validate Main
