@@ -1,5 +1,9 @@
 name: Update Azure Container Apps
 
+permissions:
+  id-token: write
+  contents: read  
+
 on:
     repository_dispatch:
         types:
