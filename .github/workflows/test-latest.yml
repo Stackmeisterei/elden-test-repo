@@ -21,18 +21,27 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Update Container Apps
-        run: |
-            IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/eldensokoli/test-project:latest | cut -d'@' -f2)
 
-            for app in test-container-app1 test-container-app2 test-container-app3; do
-              echo "Updating container app: $app with image sha: $IMAGE_SHA"
-              az containerapp update \
-              --name "$app" \
-              --resource-group containerapps-test \
-              --image "ghcr.io/eldensokoli/test-project@$IMAGE_SHA" \
-              --tags $IMAGE_SHA
-              done
+             #   - name: Login to GHCR
+    #    run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u eldensokoli --password-stdin
+           
+     # - name: Pull Docker image
+      #  run: docker pull ghcr.io/eldensokoli/test-project:latest
+
+      - name: Update Container Apps latest
+        run: |
+           echo "Updating container apps with the latest image"
+        # run: |
+        #     IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/eldensokoli/test-project:latest | cut -d'@' -f2)
+
+        #     for app in test-container-app1 test-container-app2 test-container-app3; do
+        #       echo "Updating container app: $app with image sha: $IMAGE_SHA"
+        #       az containerapp update \
+        #       --name "$app" \
+        #       --resource-group containerapps-test \
+        #       --image "ghcr.io/eldensokoli/test-project@$IMAGE_SHA" \
+        #       --tags $IMAGE_SHA
+        #       done
       
       
 

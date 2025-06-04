@@ -21,6 +21,14 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+
+
+             #   - name: Login to GHCR
+    #    run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u eldensokoli --password-stdin
+           
+     # - name: Pull Docker image
+      #  run: docker pull ghcr.io/eldensokoli/test-project:latest
+
       - name: Update Container Apps in dev
         run: |
           echo "Updating container apps in dev environment"
