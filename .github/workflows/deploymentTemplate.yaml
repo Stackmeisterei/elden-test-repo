@@ -1,0 +1,54 @@
+name: Deploy Bicep CAS Files 
+
+on:
+  repository_dispatch:
+    types: [bicep-file-change]
+    inputs:
+      fileName:
+        description: 'File name'
+        required: true
+        default: ''
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  MAIN_PATH: 'CAS/'
+  LOCATION: 'westeurope'
+  RESOURCE_PREFIX: 'emre'
+  NOTIFY_USERS: 'emre.milijic@hafn-stack.de'
+
+
+jobs:
+  validate:
+    name: Validate Main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{  secrets.EMRE_CREDS  }}
+          enable-AzPSSession: true
+          
+      - name: Build Bicep File
+        run: |
+          TEMPLATE_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicep"
+          az bicep build --file "${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicep"
+        shell: bash
+
+      - name: Run Preflight Validation
+        run: |
+          TEMPLATE_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicep"
+          PARAMETERS_PATH="${{ env.MAIN_PATH }}${{ github.event.client_payload.fileName }}.bicepparam"
+          az deployment group what-if \
+          --resource-group emreTestVersioning \
+          --template-file CAS/test.bicep
+#         az deployment group create \
+#         --resource-group emreTestVersioning \
+#         --template-file "$TEMPLATE_PATH" \
+#         --parameters "$PARAMETERS_PATH"
+          
