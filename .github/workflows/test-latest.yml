@@ -44,8 +44,8 @@ jobs:
 
 
 
-      - name: Update Container Apps latest
-        if: ${{ github.event.action == 'package_push_latest' }}
+      - name: Update Container Apps dev
+        if: ${{ github.event.action == 'package_push_dev' }}
         run: |
            echo "Updating container apps with the dev image"
         
