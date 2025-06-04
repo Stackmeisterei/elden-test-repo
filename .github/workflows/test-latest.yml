@@ -1,0 +1,96 @@
+name: Update Azure Container Apps
+
+on:
+    repository_dispatch:
+      types:
+        - package_push_latest
+
+    # registry_package:
+    #   types: [published]
+    workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  update-container-apps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Azure via OIDC
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Update Container Apps
+        run: |
+            IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/eldensokoli/test-project:latest | cut -d'@' -f2)
+
+            for app in test-container-app1 test-container-app2 test-container-app3; do
+              echo "Updating container app: $app with image sha: $IMAGE_SHA"
+              az containerapp update \
+              --name "$app" \
+              --resource-group containerapps-test \
+              --image "ghcr.io/eldensokoli/test-project@$IMAGE_SHA" \
+              --tags $IMAGE_SHA
+              done
+      
+      
+
+
+  
+
+        #- name: Update Container Apps
+        # run: |
+        #     for app in container-app1 container-app2 container-app3; do
+        #       az containerapp update \
+        #         --name $app \
+        #         --resource-group containerapps-test \
+        #         --image ghcr.io/eldensokoli/test-project:latest
+        #     done
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# name: Update Azure Container Apps
+
+# on:
+#     repository_dispatch:
+#     registry_package:
+#       types: [published]
+#     workflow_dispatch:  # Allows manual triggering
+
+# jobs:
+#   update-container-apps:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Login to Azure via OIDC
+#         uses: azure/login@v1
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    
+#       - name: Update Container Apps
+#         run: |
+#             for app in dab-ebanking-tst dab-gateway-tst dab-operations-tst; do
+#               az containerapp update \
+#                 --name $app \
+#                 --resource-group celsion-tst-apps \
+#                 --image ghcr.io/celsion-bank/digital-asset-backbone:latest
+#             done
