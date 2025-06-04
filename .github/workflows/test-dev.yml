@@ -5,9 +5,9 @@ permissions:
   contents: read
 
 on:
-    repository_dispatch:
-        types:
-          - package_push_dev 
+    # repository_dispatch:
+    #     types:
+    #       - package_push_dev 
 
     # registry_package:
     #   types: [published]
