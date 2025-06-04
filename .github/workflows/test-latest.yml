@@ -7,7 +7,7 @@ on:
     repository_dispatch:
       types:
         - package_push_latest
-        - package_push_dev
+        - package_push_rc
         - package_push_prod
 
     # registry_package:
@@ -28,11 +28,6 @@ jobs:
           enable-AzPSSession: true
 
 
-             #   - name: Login to GHCR
-    #    run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u eldensokoli --password-stdin
-           
-     # - name: Pull Docker image
-      #  run: docker pull ghcr.io/eldensokoli/test-project:latest
 
       - name: Update Container Apps latest
         if: ${{ github.event.action == 'package_push_latest' }}
@@ -40,12 +35,11 @@ jobs:
            echo "Updating container apps with the latest image"
            echo "Tag: ${{ github.event.client_payload.tag }}"
            echo "Image: ${{ github.event.client_payload.image }}"
-           echo "SHA: ${{ github.event.client_payload.sha }}"
 
 
 
-      - name: Update Container Apps dev
-        if: ${{ github.event.action == 'package_push_dev' }}
+      - name: Update Container Apps rc
+        if: ${{ github.event.action == 'package_push_rc' }}
         run: |
            echo "Updating container apps with the dev image"
         
@@ -56,6 +50,21 @@ jobs:
         run: |
            echo "Updating container apps with the prod image"
            
+
+
+
+
+
+
+
+   #   - name: Login to GHCR
+    #    run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u eldensokoli --password-stdin
+           
+     # - name: Pull Docker image
+      #  run: docker pull ghcr.io/eldensokoli/test-project:latest
+
+
+      # - name: Update Container Apps
         # run: |
         #     IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/eldensokoli/test-project:latest | cut -d'@' -f2)
 
