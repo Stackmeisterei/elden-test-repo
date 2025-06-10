@@ -42,6 +42,7 @@ jobs:
         if: ${{ github.event.action == 'package_push_rc' }}
         run: |
            echo "Updating container apps with the dev image"
+           echo "sha: ${{ github.event.client_payload.sha }}"
         
         
 
