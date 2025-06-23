@@ -2,7 +2,12 @@ param workflows_logic_app_test2_name string = 'logic-app-test2'
 param connections_keyvault_externalid string = '/subscriptions/2c0e1d00-15eb-4c13-93e6-ea9c4ed3f98a/resourceGroups/logic-app-test/providers/Microsoft.Web/connections/keyvault'
 param connections_keyvault_name string = 'keyvault'
 
-
+module modManagedIdentity 'br/stackmeisterei:userassignedidentity:1.0' = {
+  params: {
+    paramName: 'logicAppManagedIdentity'
+    location: 'westeurope'
+  }
+}
 
 resource connections_keyvault_name_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
   name: connections_keyvault_name
@@ -10,40 +15,35 @@ resource connections_keyvault_name_resource 'Microsoft.Web/connections@2018-07-0
   kind: 'V1'
   properties: {
     displayName: 'new_conn_333'
-    statuses: [
-      {
-        status: 'Ready'
-      }
-    ]
-    customParameterValues: {}
-    parameterValues: {
-      vaultName: 'github-ghcr-pat'
-      authentication: {
-        type: 'ManagedServiceIdentity'
-        identity: {
-          type: 'SystemAssigned'
-          resourceId: workflows_logic_app_test2_name_resource.id
+    parameterValueSet: {
+      name: 'oauthMI'
+      values: {
+        vaultname: {
+          value: 'github-pat-test'
         }
       }
     }
-
     api: {
-      name: connections_keyvault_name
-      displayName: 'Azure Key Vault'
-      description: 'Azure Key Vault is a service to securely store and access secrets.'
+      // name: connections_keyvault_name
+      // displayName: 'Azure Key Vault'
+      // description: 'Azure Key Vault is a service to securely store and access secrets.'
       id: '/subscriptions/2c0e1d00-15eb-4c13-93e6-ea9c4ed3f98a/providers/Microsoft.Web/locations/westeurope/managedApis/keyvault'
-      type: 'Microsoft.Web/locations/managedApis'
+      // type: 'Microsoft.Web/locations/managedApis'
     }
        testLinks: []
   }
 }
 
 
+
 resource workflows_logic_app_test2_name_resource 'Microsoft.Logic/workflows@2017-07-01' = {
   name: workflows_logic_app_test2_name
   location: 'westeurope'
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '/subscriptions/2c0e1d00-15eb-4c13-93e6-ea9c4ed3f98a/resourceGroups/logicapp-denis/providers/Microsoft.ManagedIdentity/userAssignedIdentities/logicAppManagedIdentity' : {}
+    }
   }
   properties: {
     state: 'Enabled'
@@ -124,16 +124,22 @@ resource workflows_logic_app_test2_name_resource 'Microsoft.Logic/workflows@2017
         value: {
           keyvault: {
             id: '/subscriptions/2c0e1d00-15eb-4c13-93e6-ea9c4ed3f98a/providers/Microsoft.Web/locations/westeurope/managedApis/keyvault'
-            connectionId: connections_keyvault_externalid
-            connectionName: 'keyvault'
+            connectionId: connections_keyvault_name_resource.id
+            // connectionName: 'keyvault'
             connectionProperties: {
               authentication: {
                 type: 'ManagedServiceIdentity'
+                identity: '/subscriptions/2c0e1d00-15eb-4c13-93e6-ea9c4ed3f98a/resourceGroups/logicapp-denis/providers/Microsoft.ManagedIdentity/userAssignedIdentities/logicAppManagedIdentity'
               }
+
             }
           }
         }
       }
     }
   }
+  dependsOn: [
+    connections_keyvault_name_resource
+  ]
 }
+
